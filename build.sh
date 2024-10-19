@@ -33,7 +33,7 @@ tar -xf gcc32.tar.gz -C $GCCbPath
 KERNEL_ROOTDIR=$(pwd)/kernel # IMPORTANT ! Fill with your kernel source root directory.
 export TZ=Asia/Jakarta # Change with your local timezone.
 export LD=ld.lld
-export KERNELNAME=TOM-EOL-CIP92 # Change with your localversion name or else.
+export KERNELNAME=TOM-EOL-CIP92-EAS # Change with your localversion name or else.
 export KBUILD_BUILD_USER=queen # Change with your own name or else.
 IMAGE=$(pwd)/kernel/out/arch/arm64/boot/Image.gz-dtb
 CLANG_VER="$("$ClangPath"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
@@ -108,7 +108,7 @@ function finerr() {
 # Zipping
 function zipping() {
     cd AnyKernel || exit 1
-    zip -r9 $KERNELNAME-$DATE.zip *
+    zip -r9 $KERNELNAME-$DATE.zip * -x .git README.md ./*placeholder .gitignore zipsigner*
     cd ..
 }
 compile
