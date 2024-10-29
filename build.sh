@@ -33,18 +33,23 @@ tar -xf gcc32.tar.gz -C $GCCbPath
 KERNEL_ROOTDIR=$(pwd)/kernel # IMPORTANT ! Fill with your kernel source root directory.
 export TZ=Asia/Jakarta # Change with your local timezone.
 export LD=ld.lld
-export KERNELNAME=TOM-EOL-CIP92-EAS # Change with your localversion name or else.
+export KERNELNAME=TOM-EOL-CIP92 # Change with your localversion name or else.
 export KBUILD_BUILD_USER=queen # Change with your own name or else.
 IMAGE=$(pwd)/kernel/out/arch/arm64/boot/Image.gz-dtb
 CLANG_VER="$("$ClangPath"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
 #LLD_VER="$("$ClangPath"/bin/ld.lld --version | head -n 1)"
 export KBUILD_COMPILER_STRING="$CLANG_VER"
 DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M")
+DATE2=$(TZ=Asia/Jakarta date +"%Y%m%d")
 START=$(date +"%s")
 PATH=${ClangPath}/bin:${GCCaPath}/bin:${GCCbPath}/bin:${PATH}
 
+# Java
+command -v java > /dev/null 2>&1
+
 # Telegram
 export BOT_MSG_URL="https://api.telegram.org/bot$TG_TOKEN/sendMessage"
+export BOT_BUILD_URL="https://api.telegram.org/bot$TG_TOKEN/sendDocument"
 
 tg_post_msg() {
   curl -s -X POST "$BOT_MSG_URL" -d chat_id="$TG_CHAT_ID" \
@@ -88,8 +93,7 @@ make -j$(nproc) ARCH=arm64 SUBARCH=arm64 O=out \
 # Push kernel to channel
 function push() {
     cd AnyKernel
-    ZIP=$(echo *.zip)
-    curl -F document=@$ZIP "https://api.telegram.org/bot$TG_TOKEN/sendDocument" \
+    curl -F document=@"$ZIP_FINAL.zip" "$BOT_BUILD_URL" \
         -F chat_id="$TG_CHAT_ID" \
         -F "disable_web_page_preview=true" \
         -F "parse_mode=html" \
@@ -108,7 +112,17 @@ function finerr() {
 # Zipping
 function zipping() {
     cd AnyKernel || exit 1
-    zip -r9 $KERNELNAME-$DATE.zip * -x .git README.md ./*placeholder .gitignore zipsigner*
+    zip -r9 $KERNELNAME-$DATE2.zip * -x .git README.md ./*placeholder .gitignore zipsigner*
+
+	## Prepare a final zip variable
+	ZIP_FINAL="$KERNELNAME-$DATE2"
+
+	msg "|| Signing Zip ||"
+	tg_post_msg "<code>🔑 Signing Zip file with AOSP keys..</code>"
+
+	curl -sLo zipsigner-3.0-dexed.jar https://github.com/Magisk-Modules-Repo/zipsigner/raw/master/bin/zipsigner-3.0-dexed.jar
+	java -jar zipsigner-3.0-dexed.jar "$ZIP_FINAL".zip "$ZIP_FINAL"-signed.zip
+	ZIP_FINAL="$ZIP_FINAL-signed"
     cd ..
 }
 compile
