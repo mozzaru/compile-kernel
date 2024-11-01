@@ -15,11 +15,10 @@ MainZipGCCbPath="${MainPath}/GCC32-zip"
 
 # Identity
 CODENAME=Hayzel
-KERNELNAME=TOM
 VARIANT=Hybrid
 VERSION=CIP
 
-git clone --depth=1 https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm660 -b wip kernel
+git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm660 -b wip kernel
 
 ClangPath=${MainClangZipPath}
 [[ "$(pwd)" != "${MainPath}" ]] && cd "${MainPath}"
@@ -145,7 +144,8 @@ function zipping() {
     sed -i "s/KBDATE/$DATE/g" aroma-config
     sed -i "s/KVARIANT/$VARIANT/g" aroma-config
     cd ../../../..
-    zip -r9 $KERNELNAME-$DATE2.zip * -x .git README.md ./*placeholder .gitignore zipsigner*
+
+    zip -r9 $KERNELNAME-$DATE2.zip * -x .git README.md anykernel-real.sh ./*placeholder .gitignore zipsigner*
 
     ## Prepare a final zip variable
     ZIP_FINAL="$KERNELNAME-$DATE2"
