@@ -16,9 +16,9 @@ MainZipGCCbPath="${MainPath}/GCC32-zip"
 # Identity
 CODENAME=Hayzel
 VARIANT=Hybrid
-VERSION=Civil Infrastructure Platform
+VERSION=CIP92-SLTS
 
-git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm660 -b wip kernel
+git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/sotodrom/kernel_asus_sdm660-4.4 kernel
 
 ClangPath=${MainClangZipPath}
 [[ "$(pwd)" != "${MainPath}" ]] && cd "${MainPath}"
