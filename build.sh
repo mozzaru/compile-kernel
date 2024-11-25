@@ -16,7 +16,7 @@ MainZipGCCbPath="${MainPath}/GCC32-zip"
 # Identity
 CODENAME=Hayzel
 VARIANT=Hybrid
-VERSION=CIP92-SLTS
+VERSION=SLTS
 
 git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/sotodrom/kernel_asus_sdm660-4.4 kernel
 
@@ -24,8 +24,8 @@ ClangPath=${MainClangZipPath}
 [[ "$(pwd)" != "${MainPath}" ]] && cd "${MainPath}"
 mkdir $ClangPath
 rm -rf $ClangPath/*
-wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/master/clang-r498229b.tar.gz -O "clang-r498229b.tar.gz"
-tar -xf clang-r498229b.tar.gz -C $ClangPath
+wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/master/clang-r522817.tar.gz -O "clang-r522817.tar.gz"
+tar -xf clang-r522817.tar.gz -C $ClangPath
 
 mkdir $GCCaPath
 mkdir $GCCbPath
