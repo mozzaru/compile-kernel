@@ -15,7 +15,8 @@ MainZipGCCbPath="${MainPath}/GCC32-zip"
 
 # Identity
 CODENAME=Hayzel
-VARIANT=Hybrid
+NAME=TOM
+VARIANT=HMP
 VERSION=SLTS
 
 git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/sotodrom/kernel_asus_sdm660-4.4 kernel
@@ -38,7 +39,7 @@ tar -xf gcc32.tar.gz -C $GCCbPath
 KERNEL_ROOTDIR=$(pwd)/kernel # IMPORTANT ! Fill with your kernel source root directory.
 export TZ=Asia/Jakarta # Change with your local timezone.
 export LD=ld.lld
-export KERNELNAME=TOM-CIP92 # Change with your localversion name or else.
+export KERNELNAME=$NAME-$VARIANT-$VERSION # Change with your localversion name or else.
 export KBUILD_BUILD_USER=queen # Change with your own name or else.
 IMAGE=$(pwd)/kernel/out/arch/arm64/boot/Image.gz-dtb
 CLANG_VER="$("$ClangPath"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
