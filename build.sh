@@ -34,16 +34,16 @@ GCCbPath="${MainGCCbPath}"
 
 # Identity
 CODENAME=Hayzel
-KERNELNAME=TOM
-VARIANT=HMP
-VERSION=CLO
-KVERSION=4.4.205
+KERNELNAME=darkonah
+VARIANT=EAS
+VERSION=EOL
+KVERSION=4.4.302
 
 # Show manufacturer info
 MANUFACTURERINFO="ASUSTek Computer Inc."
 
 # Clone Kernel Source
-git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/texascake/kernel_asus_sdm660 kernel
+git clone --depth=1 https://$USERNAME:$TOKEN@github.com/Kneba/kernel_asus_sdm660 -b main kernel
 
 # Clone Snapdragon Clang
 ClangPath=${MainClangPath}
@@ -94,7 +94,7 @@ cd ${KERNEL_ROOTDIR}
 msg "|| Cooking kernel. . . ||"
 export HASH_HEAD=$(git rev-parse --short HEAD)
 export COMMIT_HEAD=$(git log --oneline -1)
-make -j$(nproc) O=out ARCH=arm64 X00TD_defconfig
+make -j$(nproc) O=out ARCH=arm64 darkonah_defconfig
 make -j$(nproc) ARCH=arm64 SUBARCH=arm64 O=out \
     PATH=$ClangPath/bin:$GCCaPath/bin:$GCCbPath/bin:/usr/bin:${PATH} \
     CC=clang \
@@ -113,6 +113,7 @@ make -j$(nproc) ARCH=arm64 SUBARCH=arm64 O=out \
    git clone https://github.com/Tiktodz/AnyKernel3 -b hmp-old AnyKernel
    cp $IMAGE AnyKernel
 }
+
 # Push kernel to telegram
 function push() {
     cd AnyKernel
@@ -137,6 +138,7 @@ function push() {
         <b></b>
         #$KERNELNAME #$CODENAME #$VARIANT"
 }
+
 # Find Error
 function finerr() {
     curl -s -X POST "https://api.telegram.org/bot$TG_TOKEN/sendMessage" \
@@ -146,6 +148,7 @@ function finerr() {
         -d text="❌ Tetap menyerah...Pasti bisa!!!"
     exit 1
 }
+
 # Zipping
 function zipping() {
     cd AnyKernel || exit 1
@@ -189,6 +192,7 @@ function zipping() {
 	ZIP_FINAL="$ZIP_FINAL-signed"
 	cd ..
 }
+
 compile
 zipping
 END=$(date +"%s")
