@@ -34,7 +34,7 @@ GCCbPath="${MainGCCbPath}"
 
 # Identity
 CODENAME=Hayzel
-KERNELNAME=darkonah
+KERNELNAME=TOM
 VARIANT=EAS
 VERSION=EOL
 KVERSION=4.4.302
@@ -110,7 +110,7 @@ make -j$(nproc) ARCH=arm64 SUBARCH=arm64 O=out \
    fi
 
    msg "|| Cloning AnyKernel ||"
-   git clone https://github.com/Tiktodz/AnyKernel3 -b hmp-old AnyKernel
+   git clone --depth=1 https://github.com/Kneba/AnyKernel3 -b eas-aroma AnyKernel
    cp $IMAGE AnyKernel
 }
 
