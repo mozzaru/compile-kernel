@@ -66,9 +66,9 @@ KERNEL_ROOTDIR=$(pwd)/kernel # IMPORTANT ! Fill with your kernel source root dir
 export KBUILD_BUILD_USER=queen # Change with your own name or else.
 export KBUILD_BUILD_HOST=fedora-rawhide # Change with your host name.
 IMAGE=$(pwd)/kernel/out/arch/arm64/boot/Image.gz-dtb
-CLANG_VER="Snapdragon clang version 14.1.5"
+CLANG_VER="Qualcomm® Snapdragon™ clang version 14.1.5"
 #LLD_VER="$("$ClangPath"/bin/ld.lld --version | head -n 1)"
-export KBUILD_COMPILER_STRING="$CLANG_VER X GCC 4.9"
+export KBUILD_COMPILER_STRING="$CLANG_VER"
 ClangMoreStrings="AR=llvm-ar NM=llvm-nm AS=llvm-as STRIP=llvm-strip OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf HOSTAR=llvm-ar HOSTAS=llvm-as LD_LIBRARY_PATH=$ClangPath/lib LD=ld.lld HOSTLD=ld.lld"
 export TZ=Asia/Jakarta
 DATE=$(date +"%Y%m%d")
@@ -94,6 +94,7 @@ cd ${KERNEL_ROOTDIR}
 msg "|| Cooking kernel. . . ||"
 export HASH_HEAD=$(git rev-parse --short HEAD)
 export COMMIT_HEAD=$(git log --oneline -1)
+export TZ=Asia/Jakarta
 make -j$(nproc) O=out ARCH=arm64 X00TD_defconfig
 make -j$(nproc) ARCH=arm64 SUBARCH=arm64 O=out \
     PATH=$ClangPath/bin:$GCCaPath/bin:$GCCbPath/bin:/usr/bin:${PATH} \
@@ -174,7 +175,7 @@ function zipping() {
 	cd META-INF/com/google/android
 	sed -i "s/KNAME/$KERNELNAME/g" aroma-config
 	sed -i "s/KVER/$KVERSION/g" aroma-config
-	sed -i "s/KAUTHOR/dotkit @fakedotkit/g" aroma-config
+	sed -i "s/KAUTHOR/dotkit @quuenserenade/g" aroma-config
 	sed -i "s/KDEVICE/Zenfone Max Pro M1/g" aroma-config
 	sed -i "s/KBDATE/$DATE/g" aroma-config
 	sed -i "s/KVARIANT/$VARIANT/g" aroma-config
