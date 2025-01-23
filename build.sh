@@ -24,7 +24,7 @@ KVERSION=4.4.205
 MANUFACTURERINFO="ASUSTek Computer Inc."
 
 # Clone Kernel Source
-git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm636 -b tom/hmp kernel
+git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm636 -b wip kernel
 
 # Clone Snapdragon Clang
 ClangPath=${MainClangPath}
