@@ -16,15 +16,15 @@ GCCbPath="${MainGCCbPath}"
 # Identity
 CODENAME=Hayzel
 KERNELNAME=TOM
-VARIANT=HMP
-VERSION=CLO
-KVERSION=4.4.205
+VARIANT=EAS
+VERSION=EOL
+KVERSION=4.4.302
 
 # Show manufacturer info
 MANUFACTURERINFO="ASUSTek Computer Inc."
 
 # Clone Kernel Source
-git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/android_kernel_asus_sdm636 -b wip kernel
+git clone --depth=1 https://$USERNAME:$TOKEN@github.com/strongreasons/kernel_asus_sdm636 -b eol kernel
 
 # Clone Snapdragon Clang
 ClangPath=${MainClangPath}
@@ -92,7 +92,7 @@ make -j$(nproc) ARCH=arm64 SUBARCH=arm64 O=out \
    fi
 
    msg "|| Cloning AnyKernel ||"
-   git clone --depth=1 https://github.com/Tiktodz/AnyKernel3 -b hmp-old AnyKernel
+   git clone --depth=1 https://github.com/Tiktodz/AnyKernel3 -b eas AnyKernel
    cp $IMAGE AnyKernel
 }
 
