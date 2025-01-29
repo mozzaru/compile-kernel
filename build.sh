@@ -24,7 +24,7 @@ KVERSION=4.4.302
 MANUFACTURERINFO="ASUSTek Computer Inc."
 
 # Clone Kernel Source
-git clone --depth=1 https://$USERNAME:$TOKEN@github.com/strongreasons/kernel_asus_sdm636 -b eol kernel
+git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Tiktodz/kernel_asus_sdm636 -b wip kernel
 
 # Clone Snapdragon Clang
 ClangPath=${MainClangPath}
@@ -92,7 +92,7 @@ make -j$(nproc) ARCH=arm64 SUBARCH=arm64 O=out \
    fi
 
    msg "|| Cloning AnyKernel ||"
-   git clone --depth=1 https://github.com/Tiktodz/AnyKernel3 -b eas AnyKernel
+   git clone --depth=1 https://github.com/Tiktodz/AnyKernel3 -b hmp-old AnyKernel
    cp $IMAGE AnyKernel
 }
 
