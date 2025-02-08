@@ -28,7 +28,7 @@ MainClangPath="${MainPath}/clang"
 ClangPath="${MainClangPath}"
 
 # Identity
-VERSION=9x13
+VERSION=4.9-337
 KERNELNAME=TheOneMemory
 CODENAME=Onyx
 VARIANT=EAS
@@ -37,7 +37,7 @@ VARIANT=EAS
 MANUFACTURERINFO="ASUSTek Computer Inc."
 
 # Clone Kernel Source
-git clone --depth=1 https://$USERNAME:$TOKEN@github.com/Kneba/kernel_asus_sdm660-1 -b caf kernel
+git clone --depth=1 https://$USERNAME:$TOKEN@github.com/mozzaru/android_kernel_xiaomi_markw_new -b 15 kernel
 
 # Clone StRess Clang
 ClangPath=${MainClangPath}
@@ -76,7 +76,7 @@ cd ${KERNEL_ROOTDIR}
 msg "|| Cooking kernel. . . ||"
 export HASH_HEAD=$(git rev-parse --short HEAD)
 export COMMIT_HEAD=$(git log --oneline -1)
-make -j$(nproc) O=out ARCH=arm64 X00TD_defconfig
+make -j$(nproc) O=out ARCH=arm64 markw_defconfig
 make -j$(nproc) ARCH=arm64 SUBARCH=arm64 O=out \
     LD_LIBRARY_PATH="${ClangPath}/lib64:${LD_LIBRARY_PATH}" \
     PATH=$ClangPath/bin:${PATH} \
