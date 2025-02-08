@@ -1,100 +1,80 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2022 - 2024 <abenkenary3@gmail.com>
+# Copyright (C) 2023 Kneba <abenkenary3@gmail.com>
 #
 
 # Main
 MainPath="$(pwd)"
 MainClangPath="${MainPath}/clang"
-MainClangZipPath="${MainPath}/clang-zip"
-ClangPath="${MainClangZipPath}"
-GCCaPath="${MainPath}/GCC64"
-GCCbPath="${MainPath}/GCC32"
-MainZipGCCaPath="${MainPath}/GCC64-zip"
-MainZipGCCbPath="${MainPath}/GCC32-zip"
+ClangPath="${MainClangPath}"
 
 # Identity
+VERSION=9.4-337
+KERNELNAME=TheOneMemory
 CODENAME=markw
-NAME=melon
-VARIANT=HMP
-VERSION=SLTS
+VARIANT=EAS
 
-git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/mozzaru/android_kernel_xiaomi_markw_new -b 15 kernel
+# Show manufacturer info
+MANUFACTURERINFO="Xiaomi.inc."
 
-ClangPath=${MainClangZipPath}
+# Clone Kernel Source
+git clone --depth=1 https://$USERNAME:$TOKEN@github.com/mozzaru/android_kernel_xiaomi_markw_new -b 15 kernel
+
+# Clone StRess Clang
+ClangPath=${MainClangPath}
 [[ "$(pwd)" != "${MainPath}" ]] && cd "${MainPath}"
 mkdir $ClangPath
 rm -rf $ClangPath/*
-wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/master/clang-r522817.tar.gz -O "clang-r522817.tar.gz"
-tar -xf clang-r522817.tar.gz -C $ClangPath
+msg "|| Cloning Proton clang  ||"
+git clone --depth=1 https://github.com/kdrag0n/proton-clang.git $ClangPath
 
-mkdir $GCCaPath
-mkdir $GCCbPath
-wget -q https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/+archive/refs/tags/android-12.1.0_r27.tar.gz -O "gcc64.tar.gz"
-tar -xf gcc64.tar.gz -C $GCCaPath
-wget -q https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/+archive/refs/tags/android-12.1.0_r27.tar.gz -O "gcc32.tar.gz"
-tar -xf gcc32.tar.gz -C $GCCbPath
-
-# Prepare
+# Prepared
 KERNEL_ROOTDIR=$(pwd)/kernel # IMPORTANT ! Fill with your kernel source root directory.
-export TZ=Asia/Jakarta # Change with your local timezone.
-export LD=ld.lld
-export KERNELNAME=$NAME-$VARIANT-$VERSION # Change with your localversion name or else.
 export KBUILD_BUILD_USER=queen # Change with your own name or else.
 IMAGE=$(pwd)/kernel/out/arch/arm64/boot/Image.gz-dtb
 CLANG_VER="$("$ClangPath"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
-#LLD_VER="$("$ClangPath"/bin/ld.lld --version | head -n 1)"
-export KBUILD_COMPILER_STRING="$CLANG_VER"
-DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M")
-DATE2=$(TZ=Asia/Jakarta date +"%Y%m%d")
+LLD_VER="$("$ClangPath"/bin/ld.lld --version | head -n 1)"
+export KBUILD_COMPILER_STRING="$CLANG_VER with $LLD_VER"
+DATE=$(date +"%Y-%m-%d")
 START=$(date +"%s")
-PATH=${ClangPath}/bin:${GCCaPath}/bin:${GCCbPath}/bin:${PATH}
 
 # Java
 command -v java > /dev/null 2>&1
 
 # Telegram
 export BOT_MSG_URL="https://api.telegram.org/bot$TG_TOKEN/sendMessage"
-export BOT_BUILD_URL="https://api.telegram.org/bot$TG_TOKEN/sendDocument"
 
+# Telegram messaging
 tg_post_msg() {
   curl -s -X POST "$BOT_MSG_URL" -d chat_id="$TG_CHAT_ID" \
-  -d "disable_web_page_preview=true" \
-  -d "parse_mode=html" \
-  -d text="$1"
-
+    -d "disable_web_page_preview=true" \
+    -d "parse_mode=html" \
+    -d text="$1"
 }
-
-# Compile
+# Compiler
 compile(){
 cd ${KERNEL_ROOTDIR}
-# Check Kernel Version
-KERVER=$(make kernelversion)
+msg "|| Cooking kernel. . . ||"
 export HASH_HEAD=$(git rev-parse --short HEAD)
 export COMMIT_HEAD=$(git log --oneline -1)
 make -j$(nproc) O=out ARCH=arm64 markw_defconfig
 make -j$(nproc) ARCH=arm64 SUBARCH=arm64 O=out \
     LD_LIBRARY_PATH="${ClangPath}/lib64:${LD_LIBRARY_PATH}" \
-    CC=${ClangPath}/bin/clang \
-    NM=${ClangPath}/bin/llvm-nm \
-    CXX=${ClangPath}/bin/clang++ \
-    AR=${ClangPath}/bin/llvm-ar \
-    STRIP=${ClangPath}/bin/llvm-strip \
-    OBJCOPY=${ClangPath}/bin/llvm-objcopy \
-    OBJDUMP=${ClangPath}/bin/llvm-objdump \
-    OBJSIZE=${ClangPath}/bin/llvm-size \
-    READELF=${ClangPath}/bin/llvm-readelf \
-    CROSS_COMPILE=aarch64-linux-android- \
-    CROSS_COMPILE_ARM32=arm-linux-androideabi- \
-    CLANG_TRIPLE=aarch64-linux-gnu- \
-    HOSTAR=${ClangPath}/bin/llvm-ar \
-    HOSTCC=${ClangPath}/bin/clang \
-    HOSTCXX=${ClangPath}/bin/clang++
+    PATH=$ClangPath/bin:${PATH} \
+    CROSS_COMPILE=aarch64-linux-gnu- \
+    CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+    CC=clang \
+    AR=llvm-ar \
+    OBJDUMP=llvm-objdump \
+    STRIP=llvm-strip \
+    NM=llvm-nm \
+    OBJCOPY=llvm-objcopy
 
    if ! [ -a "$IMAGE" ]; then
 	finerr
 	exit 1
    fi
+   
   git clone https://github.com/mozzaru/AnyKernel-ksu -b hmp-old AnyKernel
 	cp $IMAGE AnyKernel
 }
