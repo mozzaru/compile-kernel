@@ -14,17 +14,17 @@ GCCaPath="${MainGCCaPath}"
 GCCbPath="${MainGCCbPath}"
 
 # Identity
-CODENAME=Hayzel
-KERNELNAME=TOM
+CODENAME=markw
+KERNELNAME=Melon
 VARIANT=HMP
 VERSION=EOL
-KVERSION=4.4.302
+KVERSION=4.9-337
 
 # Show manufacturer info
 MANUFACTURERINFO="ASUSTek Computer Inc."
 
 # Clone Kernel Source
-git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/Kneba/kernel_asus_sdm660 -b eol kernel
+git clone --depth=1 --recursive https://$USERNAME:$TOKEN@github.com/mozzaru/android_kernel_xiaomi_markw_new -b 15 kernel
 
 # Clone Snapdragon Clang
 ClangPath=${MainClangPath}
@@ -76,7 +76,7 @@ msg "|| Cooking kernel. . . ||"
 export HASH_HEAD=$(git rev-parse --short HEAD)
 export COMMIT_HEAD=$(git log --oneline -1)
 export TZ=Asia/Jakarta
-make -j$(nproc) O=out ARCH=arm64 X00TD_defconfig
+make -j$(nproc) O=out ARCH=arm64 markw_defconfig
 make -j$(nproc) ARCH=arm64 SUBARCH=arm64 O=out \
     PATH=$ClangPath/bin:$GCCaPath/bin:$GCCbPath/bin:/usr/bin:${PATH} \
     CC=clang \
@@ -92,7 +92,7 @@ make -j$(nproc) ARCH=arm64 SUBARCH=arm64 O=out \
    fi
 
    msg "|| Cloning AnyKernel ||"
-   git clone --depth=1 https://github.com/Tiktodz/AnyKernel3 -b hmp-old AnyKernel
+   git clone --depth=1 https://github.com/mozzaru/AnyKernel-ksu -b hmp-old AnyKernel
    cp $IMAGE AnyKernel
 }
 
@@ -147,17 +147,17 @@ function zipping() {
 	sed -i "s/build.date=.*/build.date=$DATE/g" anykernel.sh
 	sed -i "s/build.type=.*/build.type=$VERSION/g" anykernel.sh
 	sed -i "s/supported.versions=.*/supported.versions=9-13/g" anykernel.sh
-	sed -i "s/device.name1=.*/device.name1=X00TD/g" anykernel.sh
-	sed -i "s/device.name2=.*/device.name2=X00T/g" anykernel.sh
-	sed -i "s/device.name3=.*/device.name3=Zenfone Max Pro M1 (X00TD)/g" anykernel.sh
-	sed -i "s/device.name4=.*/device.name4=ASUS_X00TD/g" anykernel.sh
-	sed -i "s/device.name5=.*/device.name5=ASUS_X00T/g" anykernel.sh
-	sed -i "s/X00TD=.*/X00TD=1/g" anykernel.sh
+	sed -i "s/device.name1=.*/device.name1=markw/g" anykernel.sh
+	sed -i "s/device.name2=.*/device.name2=markw/g" anykernel.sh
+	sed -i "s/device.name3=.*/device.name3=Redmi 4 Prime (markw)/g" anykernel.sh
+	sed -i "s/device.name4=.*/device.name4=xiaomi_markw/g" anykernel.sh
+	sed -i "s/device.name5=.*/device.name5=xiaomi_markw/g" anykernel.sh
+	sed -i "s/markw=.*/markw=1/g" anykernel.sh
 	cd META-INF/com/google/android
 	sed -i "s/KNAME/$KERNELNAME/g" aroma-config
 	sed -i "s/KVER/$KVERSION/g" aroma-config
 	sed -i "s/KAUTHOR/dotkit @quuenserenade/g" aroma-config
-	sed -i "s/KDEVICE/Zenfone Max Pro M1/g" aroma-config
+	sed -i "s/KDEVICE/Redmi 4 Prime/g" aroma-config
 	sed -i "s/KBDATE/$DATE/g" aroma-config
 	sed -i "s/KVARIANT/$VARIANT/g" aroma-config
 	cd ../../../..
